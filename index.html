@@ -1,0 +1,77 @@
+import { useState, useRef, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { UploadCloud, PartyPopper } from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function BirthdayCard() {
+  const [photo, setPhoto] = useState(null);
+  const audioRef = useRef(null);
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(URL.createObjectURL(file));
+    }
+  };
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.play().catch((err) => console.log("Audio play error:", err));
+    }
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-pink-300 via-purple-300 to-blue-300 flex items-center justify-center p-4">
+      <audio ref={audioRef} loop>
+        <source src="/birthday-song.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8 }}
+        className="w-full max-w-md"
+      >
+        <Card className="rounded-2xl shadow-2xl bg-white/80 backdrop-blur p-4 border-none">
+          <CardContent className="flex flex-col items-center gap-4">
+            <h1 className="text-3xl font-bold text-center text-pink-600">
+              🎉 Happy Birthday, Bestie! 🥳
+            </h1>
+
+            {photo ? (
+              <motion.img
+                src={photo}
+                alt="Uploaded"
+                className="w-48 h-48 rounded-full object-cover border-4 border-pink-400 shadow-lg"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              />
+            ) : (
+              <label className="cursor-pointer flex flex-col items-center gap-2 text-pink-500">
+                <UploadCloud size={32} />
+                <span className="text-sm">Upload a cute photo!</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+              </label>
+            )}
+
+            <p className="text-center text-base text-gray-700">
+              Wishing you endless laughter, unforgettable memories, and all the boba your heart desires 💖✨
+            </p>
+
+            <Button className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-full shadow-md">
+              <PartyPopper className="mr-2" /> Send Virtual Hugs
+            </Button>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </div>
+  );
+}
